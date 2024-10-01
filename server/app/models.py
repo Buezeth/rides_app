@@ -8,11 +8,11 @@ class Rides(Base):
     __tablename__ = "rides"
 
     id = Column(Integer, primary_key=True, nullable=False)
-    car_id = Column(Integer, nullable=False)
+    car_id = Column(String)
     # lcoation_x_axis = Column(Integer, nullable=False)
     # lcoation_y_axis = Column(Integer, nullable=False)
-    lcoation = Column(Integer, nullable=False)
-    path = Column(String, nullable=False)
+    location = Column(String)
+    path = Column(String)
 
 
 class Drivers(Base):

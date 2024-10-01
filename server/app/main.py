@@ -1,7 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from . import models, schemas
+from .database import SessionLocal, engine
 
+models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
+
 
 origins = [
     "http://localhost.tiangolo.com",
@@ -23,10 +27,10 @@ app.add_middleware(
 async def root():
     return {"message": "Hello World"}
 
-@app.get("/api")
+@app.get("/rides")
 def get_route():
     return {"message": "route successfully got"}
 
-@app.post("/api")
+@app.post("/rides")
 def post_route():
     return {"message": "route successfully posted"}

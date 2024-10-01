@@ -8,7 +8,7 @@ export const getRequest = async () => {
     },
   };
 
-  const response = await fetch(`${api}/api`, requestOptions);
+  const response = await fetch(`${api}/rides`, requestOptions);
   const data = await response.json();
 
   console.log(data);
