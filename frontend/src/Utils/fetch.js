@@ -1,6 +1,6 @@
 const api = "http://127.0.0.1:8000";
 
-export const getRequest = async () => {
+export const getRequest = async (route) => {
   const requestOptions = {
     method: "GET",
     headers: {
@@ -8,8 +8,9 @@ export const getRequest = async () => {
     },
   };
 
-  const response = await fetch(`${api}/rides`, requestOptions);
+  const response = await fetch(`${api}/${route}`, requestOptions);
   const data = await response.json();
 
-  console.log(data);
+  // console.log(data);
+  return data;
 };

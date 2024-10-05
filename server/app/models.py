@@ -7,8 +7,8 @@ from .database import Base
 class Rides(Base):
     __tablename__ = "rides"
 
-    id = Column(Integer, primary_key=True, nullable=False)
-    car_id = Column(String)
+    # id = Column(Integer, primary_key=True, nullable=False)
+    car_id = Column(String,  primary_key=True, nullable=False)
     # lcoation_x_axis = Column(Integer, nullable=False)
     # lcoation_y_axis = Column(Integer, nullable=False)
     location = Column(String)

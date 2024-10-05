@@ -37,32 +37,32 @@ const path = [
 const records = [
   {
     id: "car1",
-    next: [8, 17],
+    actual: [8, 17],
     path,
   },
   {
     id: "car1",
-    next: [7, 14],
+    actual: [7, 14],
     path,
   },
   {
     id: "car1",
-    next: [6, 7],
+    actual: [6, 7],
     path,
   },
   {
     id: "car1",
-    next: [11, 6],
+    actual: [11, 6],
     path,
   },
   {
     id: "car1",
-    next: [12, 11],
+    actual: [12, 11],
     path,
   },
   {
     id: "car1",
-    next: [16, 13],
+    actual: [16, 13],
     path,
   },
 ];

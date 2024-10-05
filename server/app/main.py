@@ -1,7 +1,8 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from . import models, schemas
-from .database import SessionLocal, engine
+from .database import SessionLocal, engine, get_db
+from sqlalchemy.orm import Session
 
 models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
@@ -28,9 +29,10 @@ async def root():
     return {"message": "Hello World"}
 
 @app.get("/rides")
-def get_route():
-    return {"message": "route successfully got"}
+def get_route(db: Session  = Depends(get_db)):
+    return db.query(models.Rides).all()
+    # return {"message": "route successfully got"}
 
-@app.post("/rides")
-def post_route():
-    return {"message": "route successfully posted"}
+# @app.post("/rides")
+# def post_route():
+#     return {"message": "route successfully posted"}
