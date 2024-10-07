@@ -13,6 +13,7 @@ class Rides(Base):
     # lcoation_y_axis = Column(Integer, nullable=False)
     location = Column(String)
     path = Column(String)
+    # customers = relationship("Customers", back_populates="rides")
 
 
 class Drivers(Base):
@@ -25,3 +26,11 @@ class Drivers(Base):
     password = Column(String, nullable=False)
     licence_number = Column(String, nullable=False)
 
+class Customers(Base): 
+    __tablename__ = "customers"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String, unique=True, nullable=False)
+    active = Column(Boolean, nullable=False)
+    location = Column(String, nullable=False)
+    # rides = relationship("Rides", back_populates="customers")

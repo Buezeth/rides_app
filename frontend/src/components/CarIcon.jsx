@@ -64,7 +64,6 @@ export default function CarIcon({ x, y, rotation }) {
     <>
         <svg x={x} y={y} width="50" height="50" viewBox="0 0 100 100" border="solid 10px black" className="car">
             { <g width="50" height="50" transform={`rotate(${rotation})`} transform-origin="50px 50px" dangerouslySetInnerHTML={{ __html: shapes }} />}
-            {/* { !rotation && <g width="50" height="50" transform-origin="50px 50px" style={{ transition: 'all 3s linear' }}  dangerouslySetInnerHTML={{ __html: shapes }} />} */}
         </svg>
     </>
   )

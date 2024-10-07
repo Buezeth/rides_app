@@ -1,151 +1,113 @@
-const fs = require("fs");
-const { Client } = require("pg");
-const dbConfig = JSON.parse(fs.readFileSync("../dbconfig.json", "utf8"));
-const paths = require("./paths");
+// const fs = require("fs");
+// const { Client } = require("pg");
+// const dbConfig = JSON.parse(fs.readFileSync("../dbconfig.json", "utf8"));
+// const paths = require("./paths");
+import paths from "./paths.js";
+import { getRoadNodes, wait, getRandomInt, decide } from "./utils.js";
+import dbInit from "./dbInit.js";
 
-var http = require("http");
-http
-  .createServer(function (req, res) {
-    res.writeHead(200, { "Content-Type": "text/plain" });
-    res.end("Hello World\n");
-  })
-  .listen(8080, "127.0.0.1");
-console.log("Server running at http://127.0.0.1:8080/");
+const db = dbInit();
 
-const wait = (t) =>
-  new Promise((res) => {
-    setTimeout(() => {
-      res();
-    }, t);
-  });
+const roadNodes = getRoadNodes().filter((coord) => {
+  const [x, y] = coord.split(":");
+  return x !== "0" && x !== "49" && y !== "0" && y !== "49"; // exclude edge coords for now
+});
 
-// const paths = {
-//   first: [
-//     [8, 17],
-//     [8, 16],
-//     [8, 15],
-//     [8, 14],
-//     [7, 14],
-//     [6, 14],
-//     [6, 13],
-//     [6, 12],
-//     [6, 11],
-//     [6, 10],
-//     [6, 9],
-//     [6, 8],
-//     [6, 7],
-//     [6, 6],
-//     [7, 6],
-//     [8, 6],
-//     [9, 6],
-//     [10, 6],
-//     [11, 6],
-//     [12, 6],
-//     [12, 7],
-//     [12, 8],
-//     [12, 9],
-//     [12, 10],
-//     [12, 11],
-//     [12, 12],
-//     [12, 13],
-//     [12, 14],
-//     [13, 14],
-//     [14, 14],
-//     [15, 14],
-//     [16, 14],
-//     [16, 13],
-//     [16, 12],
-//   ],
-//   second: [
-//     [16, 12],
-//     [16, 11],
-//     [17, 11],
-//     [18, 11],
-//     [19, 11],
-//     [20, 11],
-//     [21, 11],
-//     [22, 11],
-//     [23, 11],
-//     [24, 11],
-//     [25, 11],
-//     [26, 11],
-//     [26, 12],
-//     [26, 13],
-//     [26, 14],
-//     [26, 15],
-//     [26, 16],
-//     [26, 17],
-//     [26, 18],
-//     [26, 19],
-//     [26, 20],
-//     [26, 21],
-//     [26, 22],
-//     [25, 22],
-//     [24, 22],
-//     [23, 22],
-//     [22, 22],
-//     [21, 22],
-//     [20, 22],
-//     [20, 23],
-//     [20, 24],
-//     [19, 24],
-//     [18, 24],
-//     [17, 24],
-//     [16, 24],
-//     [15, 24],
-//     [14, 24],
-//     [13, 24],
-//     [12, 24],
-//     [11, 24],
-//     [10, 24],
-//     [9, 24],
-//     [8, 24],
-//     [8, 23],
-//     [8, 22],
-//     [8, 21],
-//     [8, 20],
-//     [8, 19],
-//     [8, 18],
-//     [8, 17],
-//   ],
+// var http = require("http");
+// http
+//   .createServer(function (req, res) {
+//     res.writeHead(200, { "Content-Type": "text/plain" });
+//     res.end("Hello World\n");
+//   })
+//   .listen(8080, "127.0.0.1");
+// console.log("Server running at http://127.0.0.1:8080/");
+
+class Customer {
+  constructor({ name }) {
+    this.refreshInterval = 500;
+    this.name = name;
+    this.active = false;
+    this.location = null;
+    this.simulate();
+  }
+
+  async simulate() {
+    while (true) {
+      let newActive;
+      if (this.active) newActive = decide(95);
+      else newActive = decide(5);
+
+      if (this.active !== newActive) {
+        if (newActive) {
+          const location = roadNodes[getRandomInt(0, roadNodes.length - 1)];
+          this.location = location;
+        }
+
+        this.active = newActive;
+        const res = await db.query(
+          `
+            INSERT INTO customers (name, active, location)
+            VALUES ('${this.name}', ${this.active}, '${this.location}')
+            ON CONFLICT (name)
+            DO UPDATE SET name = EXCLUDED.name, active = EXCLUDED.active, location = EXCLUDED.location;
+            `
+        );
+
+        if (!res.rowCount || res.rowCount !== 1) console.error(res);
+      }
+      await wait(this.refreshInterval);
+    }
+  }
+}
+
+// const main = async () => {
+//   await wait(5000);
+
+//   const { host, port, user, password, dbname } = dbConfig;
+//   const client = new Client({ host, port, user, password, database: dbname });
+
+//   client.connect((err) => {
+//     if (err) console.error("connection error", err.stack);
+//     else console.log("connected");
+//   });
+
+//   const cycle = async (pathObj) => {
+//     while (true) {
+//       const { carId, i, selected } = pathObj;
+//       const path = pathObj[selected];
+//       const [x, y] = path[i];
+
+//       const res = await client.query(
+//         `
+//         INSERT INTO rides (car_id, location, path)
+//         VALUES ('${carId}', '${x}:${y}', '${JSON.stringify(path)}')
+//         ON CONFLICT (car_id)
+//         DO UPDATE SET location = EXCLUDED.location, path = EXCLUDED.path;
+//         `
+//       );
+//       if (res.rowCount) console.log(`${x}:${y}`);
+
+//       if (i === path.length - 1) {
+//         pathObj.selected = selected === "first" ? "second" : "first";
+//         pathObj.i = 0;
+//         await wait(3000);
+//       } else {
+//         pathObj.i++;
+//       }
+
+//       await wait(200);
+//     }
+//   };
+
+//   for (const pathObj of paths) {
+//     cycle(pathObj);
+//   }
 // };
+
+// main();
 
 const main = async () => {
   await wait(5000);
-
-  const { host, port, user, password, dbname } = dbConfig;
-  const client = new Client({ host, port, user, password, database: dbname });
-
-  client.connect((err) => {
-    if (err) console.error("connection error", err.stack);
-    else console.log("connected");
-  });
-
-  //   let path = "first";
-  //   let i = 0;
-
-  //   while (true) {
-  //     const [x, y] = paths[path][i];
-
-  //     const res = await client.query(
-  //       `
-  //         INSERT INTO rides (id, car_id, location, path)
-  //         VALUES ('1', 'car1', '${x}:${y}', '${JSON.stringify(paths[path])}')
-  //         ON CONFLICT (id)
-  //         DO UPDATE SET location = EXCLUDED.location, path = EXCLUDED.path;
-  //         `
-  //     );
-  //     if (res.rowCount) console.log(`${x}:${y}`);
-
-  //     if (i === paths[path].length - 1) {
-  //       path = path === "first" ? "second" : "first";
-  //       i = 0;
-  //       await wait(3000);
-  //     } else {
-  //       i++;
-  //     }
-  //     await wait(200);
-  //   }
 
   const cycle = async (pathObj) => {
     while (true) {
@@ -153,15 +115,15 @@ const main = async () => {
       const path = pathObj[selected];
       const [x, y] = path[i];
 
-      const res = await client.query(
+      const res = await db.query(
         `
-        INSERT INTO rides (car_id, location, path) 
+        INSERT INTO rides (car_id, location, path)
         VALUES ('${carId}', '${x}:${y}', '${JSON.stringify(path)}')
-        ON CONFLICT (car_id) 
+        ON CONFLICT (car_id)
         DO UPDATE SET location = EXCLUDED.location, path = EXCLUDED.path;
         `
       );
-      if (res.rowCount) console.log(`${x}:${y}`);
+      if (!res.rowCount || res.rowCount !== 1) console.error(res);
 
       if (i === path.length - 1) {
         pathObj.selected = selected === "first" ? "second" : "first";
@@ -178,6 +140,10 @@ const main = async () => {
   for (const pathObj of paths) {
     cycle(pathObj);
   }
-};
 
+  // Simulate customers
+  ["Alice", "Michael", "Kate", "Paul", "Susan", "Andrew"].forEach((name) => {
+    new Customer({ name });
+  });
+};
 main();

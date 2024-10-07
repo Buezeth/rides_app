@@ -6,10 +6,11 @@ import Map from './components/Map'
 import Car from './components/Car'
 import records from './Utils/records'
 import { wait } from './Utils/Wait'
-import config from './Utils/Config'
+import config from '../../_config/Config'
 import { getRequest } from './Utils/fetch'
+import CustomerIcon from './components/CustomerIcon'
 
-const {gridCount, gridSize, squareSize, fetchInterval} = config
+const { gridSize, squareSize, fetchInterval, circleRefreshInterval } = config
 
 
 function App() {
@@ -21,22 +22,24 @@ function App() {
 
   const [previousUpdateAt, setPreviousUpdateAt] = useState(Date.now())
   const [refreshing, setRefreshing] = useState(false)
+  const [ridesData, setRidesData] = useState()
+  const [customers, setCustomers] = useState({ customer: []})
 
   const loadData = async() => {
     while (true) {
-      // const rides = await api.get('/rides');
       const rides = await getRequest('rides');
+      setRidesData(rides)
 
       const timeout = 2000;
       const now = Date.now();
-      if ((now - previousUpdateAt) > timeout) {
-        setPreviousUpdateAt(now)
-        setCars({cars: []})
-        setRefreshing(true)
+      // if ((now - previousUpdateAt) > timeout) {
+      //   setPreviousUpdateAt(now)
+      //   // setCars({cars: []})
+      //   setRefreshing(true)
 
-        await wait(fetchInterval);
-        continue;
-      }
+      //   await wait(circleRefreshInterval);
+      //   // continue;
+      // }
 
       setPreviousUpdateAt(now);
 
@@ -58,18 +61,22 @@ function App() {
     }
   }
 
+  const loadCustomers = async () => {
+    while (true) {
+      const customers_db = await getRequest('customers');
+      // console.log(customers_db)
+      setCustomers({ customer: customers_db });
+      await wait(fetchInterval);
+    }
+  }
+
   useEffect(()=>{
     const simulate = async () => {
-      // for( const record of records) {
-      //   setCars({cars: [record]})
-      //   await wait(fetchInterval)
-      // }
-
-      await loadData()
+      loadData()
+      loadCustomers()
     }
   
     simulate()
-    // getRequest()
 
   }, [])
 
@@ -78,18 +85,17 @@ function App() {
     return <Car key={id} actual={actual} squareSize={squareSize} path={path} />
   })
 
-  const actualsColors = {car1: '#10b981', car2: '#6366f1', car3: '#f43f5e'};
-    const actuals = cars.cars.map(({ id, actual }) => {
-      return (
-        <circle 
-          key={`${actual[0]}:${actual[1]}`}
-          r={squareSize / 2}
-          cx={actual[0] * squareSize + (squareSize / 2)}
-          cy={actual[1] * squareSize + (squareSize / 2)}
-          fill={actualsColors[id]}
-        />
-      );
-    });
+
+
+  const customerData = customers.customer.map(({id, name, location}) => {
+    const [x, y] = location.split(":")
+    return (
+      <CustomerIcon
+        key={`${x}:${y}`}
+        x={x * squareSize - (squareSize / 2)}
+        y={y * squareSize - (squareSize / 2)}
+      />)
+  })
 
   return (
     <>
@@ -100,7 +106,7 @@ function App() {
       >
         <Map gridSize={gridSize} squareSize={squareSize} />
         {carsData}
-        {actuals}
+        {customerData}
       </svg>
     </>
   )

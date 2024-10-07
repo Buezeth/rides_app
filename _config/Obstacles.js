@@ -1,4 +1,4 @@
-export const obstacles = [
+const obstacles = [
   // Parks
   [19, 23, 4, 10, "#70A288"],
   [33, 34, 24, 30, "#70A288"],
@@ -247,4 +247,4 @@ export const obstacles = [
   [10, 10, 45, 45],
 ];
 
-export default obstacles;
+module.exports = obstacles;

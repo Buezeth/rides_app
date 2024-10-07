@@ -231,4 +231,4 @@ const paths = [
     ],
   },
 ];
-module.exports = paths;
+export default paths;

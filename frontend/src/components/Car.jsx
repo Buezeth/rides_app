@@ -1,13 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react'
 import CarIcon from './CarIcon'
-import { advanceCoord, getNextCoordIndex, getRotation, getTurnDistance, countTurns, getDirection } from '../Utils/Movement'
+import { getRotation} from '../Utils/Movement'
 import { wait } from '../Utils/Wait';
-import config from '../Utils/Config';
+import config from '../../../_config/Config';
 
-const { fetchInterval, refreshInterval, turnDuration} = config
+const { refreshInterval} = config
 
-// const fetchInterval = 1000;
-// const refreshInterval = 33;
 
 
 export default function Car({ actual, path, squareSize}) {
@@ -18,7 +16,7 @@ export default function Car({ actual, path, squareSize}) {
     const prevNextRef = useRef(actual)
     let rotateBusy = false
 
-    const [latestUpdateAt, setLatestUpdateAt] = useState(0)
+    const [latestUpdatesAt, setLatestUpdatesAt] = useState()
     
     // Rotation function
     const rotate = async(section, i) => {
@@ -26,8 +24,6 @@ export default function Car({ actual, path, squareSize}) {
       rotateBusy = true
       
       let targetRotation = getRotation(section, i)
-
-      const direction = getDirection(section, i)
       
       setRotationState(targetRotation)
 
@@ -36,44 +32,33 @@ export default function Car({ actual, path, squareSize}) {
 
     // Move function
     const move = async (receivedAt, latestUpdateAt) => {
+        // await wait(00); 
 
       while (moveBusy) {
-        await wait(100);
-        if (receivedAt !== latestUpdateAt) return;
+        await wait(100); 
+        if (receivedAt !== latestUpdateAt) {
+          // console.log("recievedAt not equal latestUpdate")
+          return
+        };
       }
   
       setMoveBusy(true);
-
-      let [currX, currY] = position
       
-      // I modified start index, rember to set it to default if needed
-      // const startIndex = getNextCoordIndex(curX, curY, path)
       const startIndex = start_Index
       const endIndex = path.findIndex(([x, y]) => {
         return x === actual[0] && y === actual[1]
       })
+
       setStart_Index(endIndex + 1)
-      // console.log("startIndex: " + startIndex + " endIndex: " + endIndex)
       const section = path.slice(startIndex, endIndex + 1)
-      const distance = endIndex - startIndex + Math.max(currX % 1, currY % 1)
-      
-      // Rotation
-      const turnCount = countTurns(section);
-      const turnsDuration = turnCount * turnDuration;
-      // steps before rotation
-      // const steps = fetchInterval / refreshInterval
-      // steps after rotation
-      const steps = (fetchInterval - turnsDuration) / refreshInterval;
-      const increment = distance / steps
 
-
-      
+  
       for (let i = 0; i < section.length; i++) {
 
         if (i > 0) {
-          while (rotateBusy) {
-            await wait(refreshInterval);
-          }
+          // while (rotateBusy) {
+          //   await wait(refreshInterval);
+          // }
           await rotate(section, i);
         }
 
@@ -90,10 +75,10 @@ export default function Car({ actual, path, squareSize}) {
 
 
     useEffect(() => {
-      if(prevNextRef.current === actual) return
+      // if(prevNextRef.current === actual) return
       const receivedAt = Date.now()
-      setLatestUpdateAt(receivedAt)
-      move(receivedAt, latestUpdateAt)
+      setLatestUpdatesAt(receivedAt)
+      move(receivedAt, latestUpdatesAt)
       prevNextRef.current = actual
     }, [actual])
 

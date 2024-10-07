@@ -13,7 +13,8 @@ origins = [
     "https://localhost.tiangolo.com",
     "http://localhost",
     "http://localhost:8080",
-    "http://localhost:5173"
+    "http://localhost:5173",
+    "*"
 ]
 
 app.add_middleware(
@@ -31,8 +32,7 @@ async def root():
 @app.get("/rides")
 def get_route(db: Session  = Depends(get_db)):
     return db.query(models.Rides).all()
-    # return {"message": "route successfully got"}
 
-# @app.post("/rides")
-# def post_route():
-#     return {"message": "route successfully posted"}
+@app.get("/customers")
+def get_route(db: Session  = Depends(get_db)):
+    return db.query(models.Customers).filter(models.Customers.active == True).all()
