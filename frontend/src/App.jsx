@@ -6,7 +6,7 @@ import Map from './components/Map'
 import Car from './components/Car'
 import records from './Utils/records'
 import { wait } from './Utils/Wait'
-import config from '../../_config/Config'
+import config from '../../shared/Config.js'
 import { getRequest } from './Utils/fetch'
 import CustomerIcon from './components/CustomerIcon'
 

@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import CarIcon from './CarIcon'
 import { getRotation} from '../Utils/Movement'
 import { wait } from '../Utils/Wait';
-import config from '../../../_config/Config';
+import config from '../../../shared/Config.js';
 
 const { refreshInterval} = config
 

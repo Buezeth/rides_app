@@ -1,6 +1,6 @@
 import React from 'react'
-// import { obstacles } from '../../../_config/Obstacles.js'
-import { obstacles } from '../Utils/Obstacles.js'
+import obstacles from '../../../shared/Obstacles.js'
+// import { obstacles } from '../Utils/Obstacles.js'
 import ObstacleDraw from './ObstacleDraw'
 
 

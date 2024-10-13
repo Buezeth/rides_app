@@ -33,4 +33,5 @@ class Customers(Base):
     name = Column(String, unique=True, nullable=False)
     active = Column(Boolean, nullable=False)
     location = Column(String, nullable=False)
+    destination = Column(String, nullable=False)
     # rides = relationship("Rides", back_populates="customers")

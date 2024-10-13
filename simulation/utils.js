@@ -1,4 +1,4 @@
-import obstacles from "../_config/Obstacles.js";
+import { obstacles } from "../shared/Obstacles.js";
 
 export const getRandomInt = (min, max) =>
   Math.floor(Math.random() * (max - min) + min);
