@@ -33,6 +33,10 @@ async def root():
 def get_route(db: Session  = Depends(get_db)):
     return db.query(models.Rides).all()
 
+@app.get("/drivers")
+def get_route(db: Session  = Depends(get_db)):
+    return db.query(models.Drivers).all()
+
 @app.get("/customers")
 def get_route(db: Session  = Depends(get_db)):
     return db.query(models.Customers).filter(models.Customers.active == True).all()

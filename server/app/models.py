@@ -19,19 +19,27 @@ class Rides(Base):
 class Drivers(Base):
     __tablename__ = "drivers"
 
-    id = Column(Integer, primary_key=True)
-    name = Column(String, nullable=False)
-    phone = Column(Integer, nullable=False)
-    email = Column(String, nullable=False)
-    password = Column(String, nullable=False)
-    licence_number = Column(String, nullable=False)
+    driver_id = Column(String, primary_key=True)
+    name = Column(String)
+    status = Column(String)
+    location = Column(String)
+    path = Column(String)
+    path_index = Column(String)
+    # licence_number = Column(String)
+    customer_id = Column(String, ForeignKey("customers.customer_id", ondelete="CASCADE"))
+    customer_name = Column(String, ForeignKey("customers.name", ondelete="CASCADE"))
+    # customer = relationship("Customers")
 
 class Customers(Base): 
     __tablename__ = "customers"
 
-    id = Column(Integer, primary_key=True)
-    name = Column(String, unique=True, nullable=False)
-    active = Column(Boolean, nullable=False)
-    location = Column(String, nullable=False)
-    destination = Column(String, nullable=False)
+    customer_id = Column(String, primary_key=True)
+    name = Column(String, unique=True)
+    active = Column(Boolean)
+    location = Column(String)
+    destination = Column(String)
+    driver_id = Column(String, ForeignKey("drivers.driver_id", ondelete="CASCADE"))
+    # driver_id = relationship("Drivers", back_populates="customers")
     # rides = relationship("Rides", back_populates="customers")
+    
+    

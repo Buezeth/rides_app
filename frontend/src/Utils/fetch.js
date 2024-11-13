@@ -11,6 +11,6 @@ export const getRequest = async (route) => {
   const response = await fetch(`${api}/${route}`, requestOptions);
   const data = await response.json();
 
-  // console.log(data);
+  console.log(data);
   return data;
 };

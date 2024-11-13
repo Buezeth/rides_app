@@ -4,6 +4,7 @@ const squareSize = gridSize / gridCount;
 // const fetchInterval = 1000;
 const fetchInterval = 1500;
 const refreshInterval = 100;
+const maxActiveCustomers = 4;
 // const circleRefreshInterval = 5000;
 const turnDuration = refreshInterval * 8;
 
@@ -14,6 +15,7 @@ export const config = {
   fetchInterval,
   refreshInterval,
   turnDuration,
+  maxActiveCustomers,
 };
 
 export default config;

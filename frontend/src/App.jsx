@@ -9,6 +9,7 @@ import { wait } from './Utils/Wait'
 import config from '../../shared/Config.js'
 import { getRequest } from './Utils/fetch'
 import CustomerIcon from './components/CustomerIcon'
+import DestIcon from './components/DestIcon.jsx'
 
 const { gridSize, squareSize, fetchInterval, circleRefreshInterval } = config
 
@@ -27,7 +28,7 @@ function App() {
 
   const loadData = async() => {
     while (true) {
-      const rides = await getRequest('rides');
+      const rides = await getRequest('drivers');
       setRidesData(rides)
 
       const timeout = 2000;
@@ -45,11 +46,11 @@ function App() {
 
       const cars_db = [];
       for (const ride of rides) {
-        const { car_id, location } = ride;
+        const { driver_id, location } = ride;
         const path = JSON.parse(ride.path);
         const [x, y] = location.split(':');
         cars_db.push({
-          id: car_id,
+          id: driver_id,
           path: path,
           actual: [parseInt(x), parseInt(y)],
         });
@@ -81,13 +82,13 @@ function App() {
   }, [])
 
 
-  const carsData = cars.cars.map(({id, actual, path}) => {
+  const CarElement = cars.cars.map(({id, actual, path}) => {
     return <Car key={id} actual={actual} squareSize={squareSize} path={path} />
   })
 
 
 
-  const customerData = customers.customer.map(({id, name, location}) => {
+  const customeElement = customers.customer.map(({id, name, location}) => {
     const [x, y] = location.split(":")
     return (
       <CustomerIcon
@@ -97,6 +98,17 @@ function App() {
       />)
   })
 
+  const destElems = customers.customer.map(({ destination }) => {
+    const [x, y] = destination.split(':');
+    return (
+      <DestIcon
+        key={`${x}:${y}`}
+        x={x * squareSize - squareSize / +5}
+        y={y * squareSize - squareSize / 2 - 8}
+      />
+    );
+  });
+
   return (
     <>
       <svg
@@ -105,8 +117,9 @@ function App() {
               fill='white'
       >
         <Map gridSize={gridSize} squareSize={squareSize} />
-        {carsData}
-        {customerData}
+        {CarElement}
+        {customeElement}
+        {destElems}
       </svg>
     </>
   )

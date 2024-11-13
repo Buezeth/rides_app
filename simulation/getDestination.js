@@ -7,21 +7,21 @@ import {
 } from "./methods.js";
 const graph = getGraph();
 const queue = [];
-process.on("message", ({ name, location }) => {
-  queue.push({ name, location });
+process.on("message", ({ customerId, location }) => {
+  queue.push({ customerId, location });
 });
 const main = async () => {
   while (true) {
     if (queue.length) {
-      const { name, location } = queue.shift();
-      const [x, y] = location;
-      let [destX, destY] = generateDestination([x, y]);
-      let destination = getClosestRoadNode(destX, destY, graph);
-      process.send({ name, destination });
+      const { customerId, location } = queue.shift();
+      // const [x, y] = location;
+      const [x, y] = location.split(":");
+      let [destX, destY] = generateDestination(x, y);
+      // let destination = getClosestRoadNode(destX, destY, graph);
+      process.send({ customerId, destination: [destX, destY] });
     }
     if (queue.length) continue;
     else await wait(200);
   }
 };
 main();
-//# sourceMappingURL=getDestination.js.map
