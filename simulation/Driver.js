@@ -28,7 +28,7 @@ export default class Driver {
         INSERT INTO drivers (driver_id, location, path, path_index, customer_id)
         VALUES (
           '${this.driverId}',
-          '${this.location[0]}:${this.location[1]}',
+          '${this.location}',
           ${this.path ? `'${JSON.stringify(this.path)}'` : null},
           ${this.pathIndex ? `'${this.pathIndex}'` : null},
           ${this.customerId ? `'${this.customerId}'` : null}

@@ -1,5 +1,7 @@
 import { obstacles } from "../shared/Obstacles.js";
+import { config } from "../shared/Config.js";
 
+const { gridCount } = config;
 export const getRandomInt = (min, max) =>
   Math.floor(Math.random() * (max - min) + min);
 
@@ -27,8 +29,8 @@ export const getRoadNodes = () => {
   });
 
   const roadNodes = [];
-  for (let x = 0; x < 50; x++) {
-    for (let y = 0; y < 50; y++) {
+  for (let x = 0; x < gridCount; x++) {
+    for (let y = 0; y < gridCount; y++) {
       if (!coordsToObstacles[`${x}:${y}`]) {
         roadNodes.push(`${x}:${y}`);
       }

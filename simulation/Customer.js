@@ -76,7 +76,7 @@ export default class Customer {
 
           g.getDestination.send({
             customerId: this.customerId,
-            location,
+            location: this.location.split(":"),
           });
         } else {
           // Just became inactive -> clear state

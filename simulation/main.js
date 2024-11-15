@@ -6,8 +6,6 @@ import g from "./global.js";
 
 const { db, getDestination, dispatcher, routePlanner } = g;
 
-import { fork } from "child_process";
-
 const main = async () => {
   await db.query("DELETE FROM drivers;");
   await db.query("DELETE FROM customers;");

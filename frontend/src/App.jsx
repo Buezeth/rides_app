@@ -56,6 +56,7 @@ function App() {
         });
       }
 
+
       setRefreshing(false)
       setCars({cars : cars_db})
       await wait(fetchInterval);
@@ -109,6 +110,24 @@ function App() {
     );
   });
 
+  const pathElems = cars.cars.map(({ path }) => {
+    return path.slice(0).map((coordPair) => {
+      const [x, y] = coordPair;
+      return (
+        <circle
+          key={`${x}:${y}`}
+          width={squareSize / 4}
+          height={squareSize / 4}
+          r={squareSize / 6}
+          cx={x * squareSize + squareSize / 2}
+          cy={y * squareSize + squareSize / 2}
+          fill={"gray"}
+          stroke={"gray"}
+        />
+      );
+    });
+  });
+
   return (
     <>
       <svg
@@ -117,6 +136,7 @@ function App() {
               fill='white'
       >
         <Map gridSize={gridSize} squareSize={squareSize} />
+        {pathElems}
         {CarElement}
         {customeElement}
         {destElems}

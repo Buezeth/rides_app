@@ -14,9 +14,8 @@ const main = async () => {
   while (true) {
     if (queue.length) {
       const { customerId, location } = queue.shift();
-      // const [x, y] = location;
-      const [x, y] = location.split(":");
-      let [destX, destY] = generateDestination(x, y);
+      const [x, y] = location;
+      let [destX, destY] = generateDestination(parseInt(x), parseInt(y));
       // let destination = getClosestRoadNode(destX, destY, graph);
       process.send({ customerId, destination: [destX, destY] });
     }

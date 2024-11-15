@@ -33,7 +33,6 @@ export default function Car({ actual, path, squareSize}) {
     // Move function
     const move = async (receivedAt, latestUpdateAt) => {
         // await wait(00); 
-
       while (moveBusy) {
         await wait(100); 
         if (receivedAt !== latestUpdateAt) {
@@ -48,6 +47,8 @@ export default function Car({ actual, path, squareSize}) {
       const endIndex = path.findIndex(([x, y]) => {
         return x === actual[0] && y === actual[1]
       })
+
+      console.log(endIndex)
 
       setStart_Index(endIndex + 1)
       const section = path.slice(startIndex, endIndex + 1)
