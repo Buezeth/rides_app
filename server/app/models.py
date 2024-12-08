@@ -25,10 +25,10 @@ class Drivers(Base):
     location = Column(String)
     path = Column(String)
     path_index = Column(String)
-    # licence_number = Column(String)
-    customer_id = Column(String, ForeignKey("customers.customer_id", ondelete="CASCADE"))
-    customer_name = Column(String, ForeignKey("customers.name", ondelete="CASCADE"))
-    # customer = relationship("Customers")
+    customer_id = Column(String)
+    customer_name = Column(String)
+    # customer_id = Column(String, ForeignKey("customers.customer_id", ondelete="CASCADE"))
+    # customer_name = Column(String, ForeignKey("customers.name", ondelete="CASCADE"))
 
 class Customers(Base): 
     __tablename__ = "customers"
@@ -38,7 +38,8 @@ class Customers(Base):
     active = Column(Boolean)
     location = Column(String)
     destination = Column(String)
-    driver_id = Column(String, ForeignKey("drivers.driver_id", ondelete="CASCADE"))
+    driver_id = Column(String)
+    # driver_id = Column(String, ForeignKey("drivers.driver_id", ondelete="CASCADE"))
     # driver_id = relationship("Drivers", back_populates="customers")
     # rides = relationship("Rides", back_populates="customers")
     

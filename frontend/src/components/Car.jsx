@@ -8,9 +8,9 @@ const { refreshInterval} = config
 
 
 
-export default function Car({ actual, path, squareSize}) {
+export default function Car({ actual, path, squareSize, status}) {
     const [position, setPosition] = useState(actual)
-    const [rotationState, setRotationState] = useState(getRotation(path, 1))
+    const [rotationState, setRotationState] = useState(status === 'enroute' ? getRotation(path, 1): 0)
     const [start_Index, setStart_Index] = useState(0)
     const [moveBusy, setMoveBusy] = useState(false)
     const prevNextRef = useRef(actual)
@@ -48,7 +48,6 @@ export default function Car({ actual, path, squareSize}) {
         return x === actual[0] && y === actual[1]
       })
 
-      console.log(endIndex)
 
       setStart_Index(endIndex + 1)
       const section = path.slice(startIndex, endIndex + 1)
@@ -79,7 +78,7 @@ export default function Car({ actual, path, squareSize}) {
       // if(prevNextRef.current === actual) return
       const receivedAt = Date.now()
       setLatestUpdatesAt(receivedAt)
-      move(receivedAt, latestUpdatesAt)
+      {path && move(receivedAt, latestUpdatesAt)}
       prevNextRef.current = actual
     }, [actual])
 
